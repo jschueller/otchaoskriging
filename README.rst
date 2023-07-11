@@ -3,7 +3,7 @@
 
 otchaoskriging
 ==============
-Allows to build metamodels thanks to the chaos-kriging method (https://arxiv.org/pdf/1502.03939.pdf).
+Experimental module to build metamodels thanks to the chaos-kriging method (https://arxiv.org/pdf/1502.03939.pdf).
 
 Example::
 
