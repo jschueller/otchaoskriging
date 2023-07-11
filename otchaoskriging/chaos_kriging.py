@@ -12,8 +12,8 @@ class PCKriging:
             raise ValueError('distribution dimension must match input data dimension')
         if covarianceModel.getInputDimension() != len(X[0]):
             raise ValueError('covariance model input dimension must match input data dimension')
-        if covarianceModel.getOutputDimension() != len(Y[0]):
-            raise ValueError('covariance model output dimension must match output data dimension')
+        if covarianceModel.getOutputDimension() != 1:
+            raise ValueError('covariance model output dimension must be 1')
         self.X_ = X
         self.Y_ = Y
         self.distribution_ = distribution
@@ -57,14 +57,21 @@ class SPCKriging(PCKriging):
     def run(self):
         adaptive = ot.FixedStrategy(self.basis_, self.basisSize_)
         approx = ot.LeastSquaresMetaModelSelectionFactory(ot.LARS(), ot.CorrectedLeaveOneOut())
-        proj = ot.LeastSquaresStrategy(approx)
-        chaos = ot.FunctionalChaosAlgorithm(self.X_, self.Y_, self.distribution_, adaptive, proj)
-        chaos.run()
-        pc_res = chaos.getResult()
-        psi_k = pc_res.getReducedBasis()
-        kriging = ot.KrigingAlgorithm(self.X_, self.Y_, self.covarianceModel_, ot.Basis(psi_k))
-        kriging.run()
-        self.result_ = kriging.getResult()
+        projection = ot.LeastSquaresStrategy(approx)
+        krig_results = [None] * self.Y_.getDimension()
+        for j in range(self.Y_.getDimension()):
+            Yj = self.Y_.getMarginal(j)
+            chaos = ot.FunctionalChaosAlgorithm(self.X_, Yj, self.distribution_, adaptive, projection)
+            chaos.run()
+            pc_res = chaos.getResult()
+            psi_k = ot.Basis(pc_res.getReducedBasis())
+            kriging = ot.KrigingAlgorithm(self.X_, Yj, self.covarianceModel_, psi_k)
+            kriging.run()
+            krig_results[j] = kriging.getResult()
+        residual = [result.getResiduals()[0] for result in krig_results]
+        relativeError = [result.getRelativeErrors()[0] for result in krig_results]
+        metamodel = ot.AggregatedFunction([result.getMetaModel() for result in krig_results])
+        self.result_ = ot.MetaModelResult(self.X_, self.Y_, metamodel, residual, relativeError)
 
 
 class OPCKriging(PCKriging):
