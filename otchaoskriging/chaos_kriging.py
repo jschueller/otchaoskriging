@@ -40,7 +40,7 @@ class PCKriging:
 class SPCKriging(PCKriging):
     """
     SPC-Kriging algorithm.
-    
+
     Parameters
     ----------
     X, Y : 2d-sequence of sample
@@ -53,12 +53,11 @@ class SPCKriging(PCKriging):
 
     def __init__(self, X, Y, distribution, covarianceModel, basis=None, basisSize=None):
         super().__init__(X, Y, distribution, covarianceModel, basis, basisSize)
-        
+
     def run(self):
         adaptive = ot.FixedStrategy(self.basis_, self.basisSize_)
         approx = ot.LeastSquaresMetaModelSelectionFactory(ot.LARS(), ot.CorrectedLeaveOneOut())
         proj = ot.LeastSquaresStrategy(approx)
-        print(self.X_, self.Y_, self.distribution_, adaptive, proj)
         chaos = ot.FunctionalChaosAlgorithm(self.X_, self.Y_, self.distribution_, adaptive, proj)
         chaos.run()
         pc_res = chaos.getResult()
@@ -69,8 +68,9 @@ class SPCKriging(PCKriging):
 
 
 class OPCKriging(PCKriging):
+
     def __init__(X, Y, distribution, basis=None, basisSize=None):
         pass
+
     def run():
         pass
-    
