@@ -1,5 +1,5 @@
-.. image:: https://github.com/openturns/otchaoskriging/actions/workflows/build.yml/badge.svg?branch=master
-    :target: https://github.com/openturns/otchaoskriging/actions/workflows/build.yml
+.. image:: https://github.com/jschueller/otchaoskriging/actions/workflows/build.yml/badge.svg?branch=master
+    :target: https://github.com/jschueller/otchaoskriging/actions/workflows/build.yml
 
 otchaoskriging
 ==============
