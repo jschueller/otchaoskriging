@@ -1,4 +1,4 @@
-import otchaoskriging
+import otchaosgpr
 import openturns as ot
 from openturns.usecases import ishigami_function
 
@@ -9,7 +9,7 @@ def test_ishigami1():
     X = im.distribution.getSample(size)
     Y = im.model(X)
     covmodel = ot.SquaredExponential([0.1] * im.dim, [1.0])
-    algo = otchaoskriging.SPCGPR(X, Y, im.distribution, covmodel)
+    algo = otchaosgpr.SPCGPR(X, Y, im.distribution, covmodel)
     algo.run()
     result = algo.getResult()
 

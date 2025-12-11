@@ -2,9 +2,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='otchaoskriging',
+    name='otchaosgpr',
     version='0.0',
-    description='Chaos / Kriging metamodels',
+    description='Chaos / GPR metamodels',
     url='None',
     author='Julien Schueller',
     author_email='schueller@phimeca.com',
