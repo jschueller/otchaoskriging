@@ -9,7 +9,7 @@ def test_ishigami1():
     X = im.distribution.getSample(size)
     Y = im.model(X)
     covmodel = ot.SquaredExponential([0.1] * im.dim, [1.0])
-    algo = otchaoskriging.SPCKriging(X, Y, im.distribution, covmodel)
+    algo = otchaoskriging.SPCGPR(X, Y, im.distribution, covmodel)
     algo.run()
     result = algo.getResult()
 

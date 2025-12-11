@@ -1,9 +1,12 @@
 import openturns as ot
+try:
+    from openturns import GaussianProcessFitter, GaussianProcessRegression
+except ImportError:
+    from openturns.experimental import GaussianProcessFitter, GaussianProcessRegression
 
-
-class PCKriging:
+class PCGPR:
     """
-    Base class for chaos/kriging algorithms.
+    Base class for chaos/gpr algorithms.
     """
     def __init__(self, X, Y, distribution, covarianceModel, basis=None, basisSize=None):
         if len(X) != len(Y):
@@ -37,9 +40,9 @@ class PCKriging:
         return self.result_
 
 
-class SPCKriging(PCKriging):
+class SPCGPR(PCGPR):
     """
-    SPC-Kriging algorithm.
+    SPC-GPR algorithm.
 
     Parameters
     ----------
@@ -58,21 +61,23 @@ class SPCKriging(PCKriging):
         adaptive = ot.FixedStrategy(self.basis_, self.basisSize_)
         approx = ot.LeastSquaresMetaModelSelectionFactory(ot.LARS(), ot.CorrectedLeaveOneOut())
         projection = ot.LeastSquaresStrategy(approx)
-        krig_results = [None] * self.Y_.getDimension()
+        gpr_results = [None] * self.Y_.getDimension()
         for j in range(self.Y_.getDimension()):
             Yj = self.Y_.getMarginal(j)
             chaos = ot.FunctionalChaosAlgorithm(self.X_, Yj, self.distribution_, adaptive, projection)
             chaos.run()
             pc_res = chaos.getResult()
             psi_k = ot.Basis(pc_res.getReducedBasis())
-            kriging = ot.KrigingAlgorithm(self.X_, Yj, self.covarianceModel_, psi_k)
-            kriging.run()
-            krig_results[j] = kriging.getResult()
-        metamodel = ot.AggregatedFunction([result.getMetaModel() for result in krig_results])
+            fitter = GaussianProcessFitter(self.X_, Yj, self.covarianceModel_, psi_k)
+            fitter.run()
+            gpr = GaussianProcessRegression(fitter.getResult())
+            gpr.run()
+            gpr_results[j] = gpr.getResult()
+        metamodel = ot.AggregatedFunction([result.getMetaModel() for result in gpr_results])
         self.result_ = ot.MetaModelResult(self.X_, self.Y_, metamodel)
 
 
-class OPCKriging(PCKriging):
+class OPCGPR(PCGPR):
 
     def __init__(X, Y, distribution, basis=None, basisSize=None):
         pass
