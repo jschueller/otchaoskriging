@@ -4,26 +4,28 @@ jobs:
   conda-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-version: latest
+          conda-remove-defaults: true
       - name: Build
         shell: bash -l {0}
         run: |
-          conda install -y openturns pytest
-          python setup.py install
+          conda install -y openturns pytest pip
+          pip install .
           pytest -s
 
   conda-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-version: latest
+          conda-remove-defaults: true
       - name: Build
         run: |
           conda install -y openturns pytest pip
-          python setup.py install
+          pip install .
           pytest -s
