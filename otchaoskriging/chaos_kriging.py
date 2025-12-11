@@ -68,10 +68,8 @@ class SPCKriging(PCKriging):
             kriging = ot.KrigingAlgorithm(self.X_, Yj, self.covarianceModel_, psi_k)
             kriging.run()
             krig_results[j] = kriging.getResult()
-        residual = [result.getResiduals()[0] for result in krig_results]
-        relativeError = [result.getRelativeErrors()[0] for result in krig_results]
         metamodel = ot.AggregatedFunction([result.getMetaModel() for result in krig_results])
-        self.result_ = ot.MetaModelResult(self.X_, self.Y_, metamodel, residual, relativeError)
+        self.result_ = ot.MetaModelResult(self.X_, self.Y_, metamodel)
 
 
 class OPCKriging(PCKriging):
